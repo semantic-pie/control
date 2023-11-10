@@ -1,0 +1,94 @@
+version: '3'
+services:
+  orchestrator:
+    container_name: orchestrator
+    build:
+      context: ../orchestrator
+    network_mode: "host"
+    ports:
+      - 8070:8070
+    volumes:
+      - ../orchestrator:/app
+    depends_on:
+      machine:
+        condition: service_healthy 
+        required: true 
+      minio: 
+        condition: service_started
+        required: true
+    command: "gradle bootRun"
+
+  derezhor:
+    container_name: derezhor
+    build:
+      context: ../derezhor
+    network_mode: "host"
+    ports:
+      - 8080:8080
+    volumes:
+      - ../derezhor:/app
+    depends_on:
+      machine:
+        condition: service_healthy 
+        required: true 
+      minio: 
+        condition: service_started
+        required: true
+    command: 
+      - "gradle bootRun"
+  minio:
+    image: minio/minio
+    ports:
+      - 9000:9000
+      - 9001:9001
+    network_mode: "host"
+    environment:
+      - MINIO_ACCESS_KEY=minio1234567890
+      - MINIO_SECRET_KEY=minio1234567890
+    volumes:
+      - ./storage:/data
+    command: server --console-address ":9001" /data
+
+  machine:
+    container_name: sc-machine
+    image: semanticpie/sc-machine:0.8.0
+    volumes:
+      - ./sc-memory/kb:/kb
+      - ./sc-memory/sc-machine.ini:/sc-machine/sc-machine.ini
+      - ./sc-memory/kb-binary:/kb.bin
+    networks:
+      - pie-tunes-network
+    ports:
+      - "8090:8090"
+    healthcheck:
+      test: "python3 /sc-machine/scripts/healthcheck.py"
+      interval: 5s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    environment:
+      - "REBUILD_KB=${REBUILD_KB:-1}"
+      - "KB_PATH=${KB_PATH:-/kb/repo.path}"
+      - "BINARY_PATH=/sc-machine/bin"
+      - "CONFIG_PATH=/sc-machine/sc-machine.ini"
+    command:
+      - "serve"
+
+  web:
+    container_name: sc-web
+    image: semanticpie/sc-web:0.8.0
+    restart: unless-stopped
+    ports:
+      - "80:8000"
+    networks:
+      - pie-tunes-network
+    command:
+      - "--server-host=machine"
+      - "--public-url=ws://localhost:8090/ws_json"
+    depends_on:
+      machine:
+        condition: service_healthy  
+
+networks:
+  pie-tunes-network:
+    name: pie-tunes-network
