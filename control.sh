@@ -307,6 +307,20 @@ function show_info() {
     done < "$GIT_KB_PATHS"  
 }
 
+function prepare_interface() {
+    if [ -e "test-interface" ]; then
+        cd test-interface
+        echo "[test-interface][install]"
+        npm i --silent
+        echo "[test-interface][build]"
+        npm run build
+        echo "[test-interface][move]"
+        cp ./dist/index.html ../sc-memory/kb/music.ostis.kb/pie-tunes-keynodes/interface/index.html
+        echo "[test-interface][resolved]"
+    fi
+    cd $WORKDIR
+}
+
 # ==============================================
 # COMMAND SWITCHER
 
@@ -321,6 +335,11 @@ install)
 
     # clone knowledge bases
     prepare_all_kb
+
+    if [ -e "./sc-memory/kb/music.ostis.kb" ]; then
+        prepare_component https://github.com/semantic-pie/test-interface test-interface
+        prepare_interface 
+    fi
     ;;
 
 # clean project (remove all kbs)
