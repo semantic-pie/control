@@ -34,8 +34,7 @@ services:
       minio: 
         condition: service_started
         required: true
-    command: 
-      - "gradle bootRun"
+    command: "gradle bootRun"
   minio:
     image: minio/minio
     ports:
