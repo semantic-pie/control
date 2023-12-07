@@ -86,7 +86,16 @@ services:
       - "--public-url=ws://localhost:8090/ws_json"
     depends_on:
       machine:
-        condition: service_healthy  
+        condition: service_healthy
+
+  interface:
+    container_name: interface
+    build:
+      context: ./test-interface
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./test-interface:/usr/src/app  
 
 networks:
   pie-tunes-network:
