@@ -337,6 +337,8 @@ install)
     prepare_all_kb
 
     if [ -e "./sc-memory/kb/music.ostis.kb" ]; then
+        prepare_component https://github.com/semantic-pie/derezhor derezhor
+        prepare_component https://github.com/semantic-pie/orchestrator orchestrator
         prepare_component https://github.com/semantic-pie/test-interface test-interface
         prepare_interface 
     fi
