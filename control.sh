@@ -328,19 +328,21 @@ case $1 in
 
 # clone components
 install)
-    # clone vitally important components 
-    #prepare_component https://github.com/ostis-ai/sc-machine sc-machine
-    #prepare_component https://github.com/ostis-ai/sc-web sc-web
-    #prepare_problem_solver
-
     # clone knowledge bases
     prepare_all_kb
 
     if [ -e "./sc-memory/kb/music.ostis.kb" ]; then
-        prepare_component https://github.com/semantic-pie/derezhor derezhor
-        prepare_component https://github.com/semantic-pie/orchestrator orchestrator
-        prepare_component https://github.com/semantic-pie/test-interface test-interface
-        prepare_interface 
+
+        if [ $2 = '--dev' ]; then
+            prepare_component git@github.com:semantic-pie/derezhor derezhor
+            prepare_component git@github.com:semantic-pie/orchestrator orchestrator
+            prepare_component git@github.com:semantic-pie/test-interface test-interface
+        else
+            prepare_component https://github.com/semantic-pie/derezhor derezhor
+            prepare_component https://github.com/semantic-pie/orchestrator orchestrator
+            prepare_component https://github.com/semantic-pie/test-interface test-interface
+        fi
+        prepare_interface
     fi
     ;;
 
