@@ -394,6 +394,12 @@ stop)
     docker compose down 
     ;;
 
+build)
+    shift 1;
+    docker compose build 
+    ;;
+
+
 # restart ostis
 restart)
     shift 1;
