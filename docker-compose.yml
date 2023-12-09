@@ -88,14 +88,6 @@ services:
       machine:
         condition: service_healthy
 
-  interface:
-    container_name: interface
-    build:
-      context: ./test-interface
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./test-interface:/usr/src/app  
 
 networks:
   pie-tunes-network:
