@@ -3,12 +3,12 @@ services:
   orchestrator:
     container_name: orchestrator
     build:
-      context: ../orchestrator
+      context: ./orchestrator
     network_mode: "host"
     ports:
       - 8070:8070
     volumes:
-      - ../orchestrator:/app
+      - ./orchestrator:/app
     depends_on:
       machine:
         condition: service_healthy 
@@ -21,12 +21,12 @@ services:
   derezhor:
     container_name: derezhor
     build:
-      context: ../derezhor
+      context: ./derezhor
     network_mode: "host"
     ports:
       - 8080:8080
     volumes:
-      - ../derezhor:/app
+      - ./derezhor:/app
     depends_on:
       machine:
         condition: service_healthy 
@@ -50,7 +50,7 @@ services:
 
   machine:
     container_name: sc-machine
-    image: semanticpie/sc-machine:0.8.0
+    image: semanticpie/sc-machine:0.8.1
     volumes:
       - ./sc-memory/kb:/kb
       - ./sc-memory/sc-machine.ini:/sc-machine/sc-machine.ini
@@ -86,7 +86,8 @@ services:
       - "--public-url=ws://localhost:8090/ws_json"
     depends_on:
       machine:
-        condition: service_healthy  
+        condition: service_healthy
+
 
 networks:
   pie-tunes-network:
